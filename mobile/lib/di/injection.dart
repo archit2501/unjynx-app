@@ -18,6 +18,7 @@ import 'package:service_sync/service_sync.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unjynx_core/core.dart';
 
+import 'package:unjynx_mobile/config/app_config.dart';
 import 'package:unjynx_mobile/sync/drift_sync_local_adapter.dart';
 
 /// Global GetIt instance.
@@ -46,7 +47,16 @@ Future<void> configureDependencies() async {
   getIt
     ..registerSingleton<DatabasePort>(dbPort)
     ..registerSingleton<AppDatabase>(dbPort.db)
-    ..registerSingleton<AuthPort>(MockAuthPort());
+    ..registerSingleton<AuthPort>(
+      AppConfig.isAuthConfigured
+          ? LogtoAuthPort(
+              config: LogtoConfig(
+                endpoint: AppConfig.logtoEndpoint,
+                appId: AppConfig.logtoAppId,
+              ),
+            )
+          : MockAuthPort(),
+    );
 
   final notificationPort = AwesomeNotificationPort();
   await notificationPort.initialize();
