@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:unjynx_mobile/bootstrap.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-
   // Error boundary: catch any uncaught async errors so the app
   // doesn't silently die with a grey screen.
   runZonedGuarded(
     () async {
+      // Must be called inside the same zone as runApp to avoid zone mismatch.
+      WidgetsFlutterBinding.ensureInitialized();
+
       FlutterError.onError = (details) {
         FlutterError.presentError(details);
         debugPrint('FlutterError: ${details.exception}');
